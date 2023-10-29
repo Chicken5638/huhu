@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css"
+            integrity="sha384-nU14brUcp6StFntEOOEBvcJm4huWjB0OcIeQ3fltAfSmuZFrkAif0T+UtNGlKKQv"
+            crossorigin="anonymous"
+        />
+
+        <title>롤 라인 추천기</title>
+        <style>
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #cee5f2;
+            }
+            .prediction-bar {
+                background-color: white;
+                color: linear-gradient(to right, #43cea2, #185a9d);
+                padding: 4px;
+                margin: 4px 0;
+                border-radius: 5px;
+                transition: width 0.3s;
+            }
+            .text-container {
+                background-color: #7c98b3; /* 배경 색상과 투명도 설정 */
+                padding: 20px;
+                text-align: center;
+                border-radius: 15px;
+            }
+            .back {
+                background: #7c98b3;
+                padding: 20px;
+                width: 300px;
+                text-align: center;
+                border-radius: 15px;
+            }
+            h1 {
+                font-weight: bold;
+            }
+            .backgroundImages {
+                background-size: cover;
+            }
+        </style>
+    </head>
+    <body id="random-background">
+        <div id="title" class="text-container">
+            <h1 style="text-align: center; margin: 0 auto; color: white;">
+                롤 라인 추천해드립니다!
+            </h1>
+        </div>
+
+        <br />
+        <br />
+        <!-- '다시하기' 버튼을 초기에는 숨기고, 예측 결과가 나타날 때 표시합니다. -->
+        <div id="reset-button" style="display: none;">
+            <button onclick="resetPrediction()">다시하기</button>
+        </div>
+
+        <br />
+        <div class="back">
+            <label for="fileInput" id="fileLabel" style="cursor: pointer;">
+                <img id="upload-image" src="http://placehold.it/180" alt="your image" />
+                <p id ="click-text" style="color: white;">클릭하여 사진을 업로드 하세요</p>
+            </label>
+
+            <input type="file" id="fileInput" style="display: none;" onchange="fileSelected()" />
+            <div id="prediction-status" style="display: none;">
+                <br />
+                <h3 style="color: white;">
+                    예측결과
+                </h3>
+            </div>
+            <div id="prediction-graph">
+                <!-- 그래프가 여기에 표시될 것입니다. -->
+            </div>
+            <script src="script.js"></script>
+            <!-- 예측 버튼만 표시 -->
+            <div id="webcam-container"></div>
+            <div id="label-container"></div>
+            <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+            <script type="text/javascript">
+                // More API functions here:
+                // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+
+                // the link to your model provided by Teachable Machine export panel
+                const URL = 'https://teachablemachine.withgoogle.com/models/OKsEBZLb6/';
+
+                let model, webcam, labelContainer, maxPredictions;
+
+                // Load the image model and setup the webcam
+                async function init() {
+                    const modelURL = URL + 'model.json';
+                    const metadataURL = URL + 'metadata.json';
+
+                    // load the model and metadata
+                    // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+                    // or files from your local hard drive
+                    // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+                    model = await tmImage.load(modelURL, metadataURL);
+                    maxPredictions = model.getTotalClasses();
+                    labelContainer = document.getElementById('label-container');
+                    for (let i = 0; i < maxPredictions; i++) {
+                        // and class labels
+                        labelContainer.appendChild(document.createElement('div'));
+                    }
+                    predict(); // 모델 초기화 후 예측 시작
+                }
+                // Create a function to update the prediction graph
+                function updatePredictionGraph(predictions) {
+                    const graphContainer = document.getElementById('prediction-graph');
+                    graphContainer.innerHTML = ''; // Clear the previous graph
+
+                    predictions.forEach((prediction) => {
+                        const className = prediction.className;
+                        const probability = prediction.probability * 100; // Convert to percentage
+                        const bar = document.createElement('div');
+                        bar.style.width = probability + '%';
+                        bar.innerText = `${className} (${probability.toFixed(2)}%)`;
+                        bar.className = 'prediction-bar';
+                        graphContainer.appendChild(bar);
+                    });
+                }
+
+                // '다시하기' 버튼을 표시하고 초기화 함수 호출
+                async function predict() {
+                    var predictionStatus = document.getElementById('prediction-status');
+                    var resetButton = document.getElementById('reset-button');
+                    var uploadImage = document.getElementById('upload-image');
+                    var predictionGraph = document.getElementById('prediction-graph');
+
+                    predictionStatus.style.display = 'block'; // '예측 중...' 텍스트 나타냄
+
+                    // predict can take in an image, video, or canvas html element
+                    var image = document.getElementById('upload-image');
+                    const predictions = await model.predict(image, false);
+                    updatePredictionGraph(predictions);
+
+                    // '다시하기' 버튼을 예측 완료 후 표시
+                    resetButton.style.display = 'block';
+                }
+
+                // '다시하기' 버튼을 누를 때 초기 화면으로 돌아가는 함수
+                function resetPrediction() {
+                    var predictionStatus = document.getElementById('prediction-status');
+                    var resetButton = document.getElementById('reset-button');
+                    var uploadImage = document.getElementById('upload-image');
+                    var predictionGraph = document.getElementById('prediction-graph');
+
+                    predictionStatus.style.display = 'none'; // 예측 결과 숨김
+                    resetButton.style.display = 'none'; // '다시하기' 버튼 숨김
+                    uploadImage.src = 'http://placehold.it/180'; // 이미지 리셋
+                    predictionGraph.innerHTML = ''; // 그래프 리셋
+                }
+            </script>
+        </div>
+    </body>
+</html>
