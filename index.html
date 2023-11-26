@@ -118,6 +118,25 @@ Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
             h1 {
                 font-weight: bold;
             }
+
+            /* Add the following CSS styles to your existing styles */
+            .ins-container {
+                position: fixed;
+                left: 0;
+                top: 50%; /* Adjust this value based on your desired vertical position */
+                transform: translateY(-50%);
+                z-index: 1000; /* Ensure it's above other elements by setting a higher z-index */
+            }
+
+            ins.kakao_ad_area {
+                display: block;
+                margin: 0;
+                padding: 0;
+                width: 300px; /* Adjust the width based on your design */
+                height: 250px; /* Adjust the height based on your design */
+                background-color: #fff; /* Adjust the background color based on your design */
+                /* Add any additional styles you need */
+            }
         </style>
     </head>
     <body>
@@ -202,13 +221,15 @@ Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
         >
             이미지 다운로드
         </button>
-        <ins
-            class="kakao_ad_area"
-            style="display: none;"
-            data-ad-unit="DAN-NKJfD5FQyKE0IGlp"
-            data-ad-width="300"
-            data-ad-height="250"
-        ></ins>
+        <div class="ins-container">
+            <ins
+                class="kakao_ad_area"
+                style="display: none;"
+                data-ad-unit="DAN-NKJfD5FQyKE0IGlp"
+                data-ad-width="300"
+                data-ad-height="250"
+            ></ins>
+        </div>
         <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 
         <script src="script.js"></script>
