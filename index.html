@@ -125,6 +125,13 @@ Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
             h1 {
                 font-weight: bold;
             }
+
+            .ad-container {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                margin-bottom: 20px;
+            }
         </style>
     </head>
     <body>
@@ -210,15 +217,25 @@ Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
             </div>
         </div>
         <br />
-        <ins
-            class="kakao_ad_area"
-            style="display: none;"
-            data-ad-unit="DAN-NKJfD5FQyKE0IGlp"
-            data-ad-width="300"
-            data-ad-height="250"
-        ></ins>
-
-        <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+        <div class="ad-container">
+            <ins
+                class="kakao_ad_area"
+                data-ad-unit="DAN-NKJfD5FQyKE0IGlp"
+                data-ad-width="300"
+                data-ad-height="250"
+            ></ins>
+            <ins
+                class="kakao_ad_area"
+                data-ad-unit="DAN-HuwxabNJ2Hlq5g2W"
+                data-ad-width="300"
+                data-ad-height="250"
+            ></ins>
+            <script
+                type="text/javascript"
+                src="//t1.daumcdn.net/kas/static/ba.min.js"
+                async
+            ></script>
+        </div>
 
         <script src="script.js"></script>
         <!-- 예측 버튼만 표시 -->
