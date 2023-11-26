@@ -20,9 +20,16 @@ Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                height: 100vh;
                 margin: 0;
                 background-color: black;
+            }
+
+            .main {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh; /* 화면 전체 높이에 대한 100% */
             }
 
             @font-face {
@@ -118,118 +125,99 @@ Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
             h1 {
                 font-weight: bold;
             }
-
-            /* Add the following CSS styles to your existing styles */
-            .ins-container {
-                position: fixed;
-                left: 0;
-                top: 50%; /* Adjust this value based on your desired vertical position */
-                transform: translateY(-50%);
-                z-index: 1000; /* Ensure it's above other elements by setting a higher z-index */
-            }
-
-            ins.kakao_ad_area {
-                display: block;
-                margin: 0;
-                padding: 0;
-                width: 300px; /* Adjust the width based on your design */
-                height: 250px; /* Adjust the height based on your design */
-                background-color: #fff; /* Adjust the background color based on your design */
-                /* Add any additional styles you need */
-            }
         </style>
     </head>
     <body>
-        <div id="title" class="text-container">
-            <h1
-                style="
-                    text-align: center;
-                    margin: 0 auto;
-                    color: white;
-                    font-family: 'NEXON Lv1 Gothic OTF';
-                "
+        <div class="main" ;>
+            <div id="title" class="text-container">
+                <h1
+                    style="
+                        text-align: center;
+                        margin: 0 auto;
+                        color: white;
+                        font-family: 'NEXON Lv1 Gothic OTF';
+                    "
+                >
+                    당신의 포지션은?
+                </h1>
+            </div>
+
+            <!-- 로딩 메시지를 위한 요소 추가 -->
+            <div
+                id="loading-message"
+                class="lm"
+                style="font-size: 14px; font-family: 'NEXON Lv1 Gothic OTF;"
             >
-                당신의 포지션은?
-            </h1>
-        </div>
+                <p style="color: #ff6969;">사진 업로드 후 3~4초정도 기다려주세요...</p>
+            </div>
 
-        <!-- 로딩 메시지를 위한 요소 추가 -->
-        <div
-            id="loading-message"
-            class="lm"
-            style="font-size: 14px; font-family: 'NEXON Lv1 Gothic OTF;"
-        >
-            <p style="color: #ff6969;">사진 업로드 후 3~4초정도 기다려주세요...</p>
-        </div>
+            <div id="image-container">
+                <div class="back">
+                    <label for="fileInput" id="fileLabel" style="cursor: pointer;">
+                        <img
+                            id="upload-image"
+                            src="https://img.icons8.com/?size=256&id=69464&format=png"
+                            alt="your image"
+                        />
+                        <p
+                            id="click-text"
+                            style="
+                                color: white;
+                                text-shadow: 0 0 10px violet, 0 0 10px violet;
+                                font-weight: normal;
+                            "
+                        >
+                            클릭하여 사진을 업로드하세요
+                        </p>
+                    </label>
 
-        <!-- '다시하기' 버튼을 초기에는 숨기고, 예측 결과가 나타날 때 표시합니다. -->
-        <div class="rb" id="reset-button" style="display: none;">
-            <button onclick="resetPrediction()">다시하기</button>
-        </div>
-
-        <div id="image-container">
-            <div class="back">
-                <label for="fileInput" id="fileLabel" style="cursor: pointer;">
-                    <img
-                        id="upload-image"
-                        src="https://img.icons8.com/?size=256&id=69464&format=png"
-                        alt="your image"
+                    <input
+                        type="file"
+                        id="fileInput"
+                        style="display: none;"
+                        onchange="fileSelected()"
                     />
-                    <p
-                        id="click-text"
-                        style="
-                            color: white;
-                            text-shadow: 0 0 10px violet, 0 0 10px violet;
-                            font-weight: normal;
-                        "
-                    >
-                        클릭하여 사진을 업로드하세요
-                    </p>
-                </label>
+                    <div id="prediction-status" style="display: none;">
+                        <br />
+                        <h3 style="color: white;">
+                            예측결과
+                        </h3>
+                    </div>
+                    <div
+                        id="prediction-text"
+                        style="display: none; color: white; font-family: 'NEXON Lv1 Gothic OTF';"
+                    ></div>
 
-                <input
-                    type="file"
-                    id="fileInput"
-                    style="display: none;"
-                    onchange="fileSelected()"
-                />
-                <div id="prediction-status" style="display: none;">
-                    <br />
-                    <h3 style="color: white;">
-                        예측결과
-                    </h3>
-                </div>
-                <div
-                    id="prediction-text"
-                    style="display: none; color: white; font-family: 'NEXON Lv1 Gothic OTF';"
-                ></div>
-
-                <div class="grapp">
-                    <div id="prediction-graph">
-                        <!-- 그래프가 여기에 표시될 것입니다. -->
+                    <div class="grapp">
+                        <div id="prediction-graph">
+                            <!-- 그래프가 여기에 표시될 것입니다. -->
+                        </div>
                     </div>
                 </div>
             </div>
+            <br />
+            <button
+                type="button"
+                class="db"
+                id="idb"
+                style="display: none; margin: 0 auto;"
+                onclick="downloadImage()"
+            >
+                이미지 다운로드
+            </button>
+            <div class="rb" id="reset-button" style="display: none;">
+                <button onclick="resetPrediction()">다시하기</button>
+            </div>
         </div>
         <br />
-        <button
-            type="button"
-            class="db"
-            id="idb"
-            style="display: none; margin: 0 auto;"
-            onclick="downloadImage()"
-        >
-            이미지 다운로드
-        </button>
-        <div class="ins-container">
-            <ins
-                class="kakao_ad_area"
-                style="display: none;"
-                data-ad-unit="DAN-NKJfD5FQyKE0IGlp"
-                data-ad-width="300"
-                data-ad-height="250"
-            ></ins>
-        </div>
+        <ins
+            class="kakao_ad_area"
+            style="display: none;"
+            data-ad-unit="DAN-NKJfD5FQyKE0IGlp"
+            data-ad-width="300"
+            data-ad-height="250"
+        ></ins>
+
         <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 
         <script src="script.js"></script>
